@@ -1,8 +1,7 @@
 import { createEffect, createSignal } from 'solid-js';
-import { joinPaths } from 'solid-start/islands/server-router';
 
 const index = () => {
-    const [output, setOutput] = createSignal("your output will go here!");
+    const [outputs, setOutputs] = createSignal(["your output will go here!"]);
     const [key, setKey] = createSignal("");
     let inputKey;
     let inputData;
@@ -22,9 +21,13 @@ const index = () => {
     };
     const read = async (a) => {
         const response = await fetch(`http://localhost:3001/data/read/${a}` ,{
-          method: "GET",
+            method: "GET",
         }).then(response => response.json());
         console.log(response);
+        setOutputs([]);
+        response.forEach( item => {
+            setOutputs([...outputs(), item]);
+        });
     };
     const update = async (a, b) => {
         const data = {
@@ -75,8 +78,12 @@ const index = () => {
                         <input ref={inputData} class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-1"></input>
                     </div>
                 </div>
-                <div class="flex bg-gray-100 w-9/12 justify-around min-w-fit mt-6 h-1/3 rounded-lg border-2 border-stone-400">
-                    <p class="font-mono text-md mt-5"> {output()}</p>
+                <div class="flex flex-col bg-gray-100 w-9/12 justify-around min-h-min max-h-96 my-6 rounded-lg border-2 border-stone-400">
+                    <For each={outputs()}>{(output, i) => 
+                    <ul>
+                        <li><p class="font-mono text-md m-5 "> {output.value}</p></li>
+                    </ul>
+                    }</For>
                 </div>
             </div>
         </div>

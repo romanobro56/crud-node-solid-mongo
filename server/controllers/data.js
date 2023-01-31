@@ -21,6 +21,7 @@ export const read = async (req, res) => {
     try{
         const { key } = req.params;
         const data = await Data.find({ key });
+        console.log(data);
         res.status(200).json(data);
     } catch (err) {
         res.status(404).json({ message: err.message });
